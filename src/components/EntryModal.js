@@ -14,6 +14,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { categories } from '../utils/categories';
 import { addEntry } from '../utils/mutations';
+import { updateEntry } from '../utils/mutations';
 
 // Modal component for individual entries.
 
@@ -67,7 +68,19 @@ export default function EntryModal({ entry, type, user }) {
    };
 
    // TODO: Add Edit Mutation Handler
+   const handleEdit = () => {
+      const newEntry = {
+         name: name,
+         link: link,
+         description: description,
+         user: user?.displayName ? user?.displayName : "GenericUser",
+         category: category,
+         userid: user?.uid,
+      };
 
+      updateEntry(newEntry).catch(console.error);
+      handleClose();
+   };
    // TODO: Add Delete Mutation Handler
 
    // Button handlers for modal opening and inside-modal actions.
@@ -76,7 +89,7 @@ export default function EntryModal({ entry, type, user }) {
 
    const openButton =
       type === "edit" ? <IconButton onClick={handleClickOpen}>
-         <OpenInNewIcon />
+               <OpenInNewIcon />
       </IconButton>
          : type === "add" ? <Button variant="contained" onClick={handleClickOpen}>
             Add entry
@@ -87,6 +100,7 @@ export default function EntryModal({ entry, type, user }) {
       type === "edit" ?
          <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
+            <Button variant="contained" onClick={handleEdit}>Edit Entry</Button>
          </DialogActions>
          : type === "add" ?
             <DialogActions>
@@ -94,14 +108,12 @@ export default function EntryModal({ entry, type, user }) {
                <Button variant="contained" onClick={handleAdd}>Add Entry</Button>
             </DialogActions>
             : null;
-
    return (
       <div>
          {openButton}
          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>{type === "edit" ? name : "Add Entry"}</DialogTitle>
+            <DialogTitle>{type === "edit" ? name :"Add Entry"}</DialogTitle>
             <DialogContent>
-               {/* TODO: Feel free to change the properties of these components to implement editing functionality. The InputProps props class for these MUI components allows you to change their traditional CSS properties. */}
                <TextField
                   margin="normal"
                   id="name"
