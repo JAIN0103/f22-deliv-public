@@ -1,4 +1,5 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import SpaIcon from '@mui/icons-material/Spa';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -13,8 +14,8 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useState } from 'react';
 import { categories } from '../utils/categories';
-import { addEntry } from '../utils/mutations';
-import { updateEntry } from '../utils/mutations';
+import { addEntry, updateEntry, deleteEntry } from '../utils/mutations';
+
 
 // Modal component for individual entries.
 
@@ -69,6 +70,7 @@ export default function EntryModal({ entry, type, user }) {
 
    // TODO: Add Edit Mutation Handler
    const handleEdit = () => {
+      console.log("Handle Log");
       const newEntry = {
          name: name,
          link: link,
@@ -76,11 +78,27 @@ export default function EntryModal({ entry, type, user }) {
          user: user?.displayName ? user?.displayName : "GenericUser",
          category: category,
          userid: user?.uid,
+         id: entry?.id,
       };
 
       updateEntry(newEntry).catch(console.error);
       handleClose();
    };
+
+   const handleDelete = () => {
+      const newEntry = {
+         name: name,
+         link: link,
+         description: description,
+         user: user?.displayName ? user?.displayName : "GenericUser",
+         category: category,
+         userid: user?.uid,
+         id: entry?.id,
+      };
+      deleteEntry(newEntry).catch(console.error);
+      handleClose();
+   }
+
    // TODO: Add Delete Mutation Handler
 
    // Button handlers for modal opening and inside-modal actions.
@@ -89,25 +107,27 @@ export default function EntryModal({ entry, type, user }) {
 
    const openButton =
       type === "edit" ? <IconButton onClick={handleClickOpen}>
-               <OpenInNewIcon />
+               <SpaIcon />
       </IconButton>
          : type === "add" ? <Button variant="contained" onClick={handleClickOpen}>
             Add entry
          </Button>
             : null;
 
+
    const actionButtons =
       type === "edit" ?
          <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleDelete} color="warning">Delete</Button>
             <Button variant="contained" onClick={handleEdit}>Edit Entry</Button>
          </DialogActions>
-         : type === "add" ?
-            <DialogActions>
-               <Button onClick={handleClose}>Cancel</Button>
-               <Button variant="contained" onClick={handleAdd}>Add Entry</Button>
-            </DialogActions>
-            : null;
+      : type === "add" ?
+         <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button variant="contained" onClick={handleAdd}>Add Entry</Button>
+         </DialogActions>
+         : null;
    return (
       <div>
          {openButton}
